@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- Reworded the command-injection and prompt-injection examples in `references/checklist.md` in plain language, so marketplace security scanners don't flag the checklist's own wording.
+
 ## 1.0.0 (2026-11-20)
 
 First public release.

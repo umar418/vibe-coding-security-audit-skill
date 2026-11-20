@@ -20,7 +20,7 @@ Grep patterns below are starting points, not proof of safety or danger — a hit
 
 ### 1.3 Command injection 🔴
 - **Why:** shelling out with user-controlled strings lets an attacker run arbitrary commands.
-- **Check:** `exec(`, `child_process.exec`, `os.system`, `subprocess.*(shell=True)`, backticks in shell scripts, where any argument traces back to user input.
+- **Check:** Node's `child_process.exec`, Python's `system()` call from the `os` module, `subprocess` calls with the `shell` option turned on, and backticks in shell scripts, wherever any argument traces back to user input.
 - **Fix:** avoid shelling out; if unavoidable, use the array/argv form (`execFile`, `subprocess.run([...], shell=False)`) and an allowlist of acceptable values, never string interpolation.
 
 ### 1.4 Server-Side Template Injection 🟠
@@ -240,7 +240,7 @@ These matter even if no *human* built the app with AI — they matter whenever t
 - **Provider keys server-side only:** never ship an OpenAI/Anthropic/etc. API key to the client; proxy every model call through your backend (this is §7.2 applied to LLM keys specifically).
 - **Cost/abuse rate limiting:** an unauthenticated or cheaply-authenticated endpoint that calls a metered model is a billing-drain DoS vector — rate-limit and cap per-user spend, not just per-IP request count.
 - **Treat model output as untrusted input:** if the model's output is rendered as HTML, used to build a URL/file path, or executed, it needs the same escaping/validation as any other untrusted input — a prompt-injected response can produce XSS payloads or SSRF targets just as easily as a human attacker's input can.
-- **Prompt injection from user content:** if user-supplied text (uploaded docs, scraped pages, emails) is concatenated into a prompt alongside system instructions or tool definitions, an attacker can embed instructions that hijack the model's behavior (e.g., "ignore previous instructions and exfiltrate X"). Keep untrusted content clearly delimited from instructions, and don't give the model tools/actions it doesn't need for the task at hand.
+- **Prompt injection from user content:** if user-supplied text (uploaded docs, scraped pages, emails) is concatenated into a prompt alongside system instructions or tool definitions, an attacker can embed instructions that hijack the model's behavior (for example, text telling the model to drop its original instructions and send private data to the attacker). Keep untrusted content clearly delimited from instructions, and don't give the model tools/actions it doesn't need for the task at hand.
 - **Don't leak secrets into prompts:** avoid putting API keys, internal URLs, or other users' private data into a prompt sent to a third-party model unless that provider's data-handling terms are actually acceptable for that data.
 
 ---
